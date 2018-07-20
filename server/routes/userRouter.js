@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const logger = require('morgan')
 const errorhandler = require('errorhandler')
-const bcrypt = require('bcrypt-nodejs')
 const bodyParser = require('body-parser')
 const UserModel = require('../models/UserModel.js')
 
@@ -38,7 +37,11 @@ router.route('/login')
 router.route('/register')
     .get((req, res) => res.send({ message: 'This is the register page!'}))
     .post((req, res) => {
-        UserModel.saveUser(req, res, req.body)
+        if (isEmpty(req.body.username) || isEmpty(req.body.password)) {
+            res.status(400).send({ message: "Invalid username or password" })
+        } else {
+            UserModel.saveUser(req, res, req.body)
+        }
     })
     
 function isEmpty(string) {
