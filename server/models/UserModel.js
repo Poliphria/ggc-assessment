@@ -35,6 +35,17 @@ module.exports = {
                 console.log(err)
                 res.status(500).send({ error: err.message })
             })
+    },
+    login: function(req, res, userInfo) {
+        // Use the username to find the user in the database
+        User.findOne({username: userInfo.username}, (err, result) => {
+            if (err) res.status(500).send({ error: err })
+            comparePass(userInfo.password, result)
+                .then(match => {
+                    if (match) res.redirect(302, '/home')
+                    else res.status(400).send({ message: 'Invalid login credentials'})
+                })
+        })
     }
 }
 
@@ -54,4 +65,17 @@ async function hashPassword(passToHash) {
     let hashedPassword = await promise;
 
     return hashedPassword
+}
+
+async function comparePass(passToCompare, hashedPass) {
+    let promise = new Promise((resolve, reject) => {
+        bcrypt.compare(passToCompare, hashedPass, (err, result) => {
+            if (err) reject(err)
+            resolve(result)
+        })
+    })
+    
+    let isMatch = await promise
+    
+    return isMatch
 }

@@ -30,6 +30,8 @@ router.route('/login')
         // if the login info is empty or null then return an error
         if (isEmpty(loginInfo.email) || isEmpty(loginInfo.password)) {
             res.status(401).send({ message: 'Invalid login credentials'})
+        } else {
+            UserModel.login(req, res, loginInfo)
         }
         
     })
