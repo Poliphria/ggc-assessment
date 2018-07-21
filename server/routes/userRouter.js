@@ -16,6 +16,9 @@ if (process.env.NODE_ENV == 'development') {
 }
 
 // paths
+router.get('/home', (req, res) => {
+    res.send({ message: 'This is the home page'})
+})
 router.get('/login', (req, res) => {
     res.send({ message: 'This is the login page!'})
 })
@@ -26,14 +29,12 @@ router.route('/login')
     })
     .post((req, res) => {
         let loginInfo = req.body
-        
         // if the login info is empty or null then return an error
-        if (isEmpty(loginInfo.email) || isEmpty(loginInfo.password)) {
-            res.status(401).send({ message: 'Invalid login credentials'})
+        if (isEmpty(loginInfo.username) || isEmpty(loginInfo.password)) {
+            res.status(400).send({ message: 'Invalid login credentials'})
         } else {
-            UserModel.login(req, res, loginInfo)
+            UserModel.login(req, res, req.body)
         }
-        
     })
 
 router.route('/register')
@@ -52,5 +53,6 @@ function isEmpty(string) {
     }
     return false;
 }
+
 
 module.exports = router
